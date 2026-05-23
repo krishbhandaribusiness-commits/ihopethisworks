@@ -1,0 +1,189 @@
+:root {
+    --bg-color: #f7f9fa;
+    --text-color: #1a1a1a;
+    --board-white: #ffffff;
+    --board-blue: #3b82f6;
+    --piece-white: #ffffff;
+    --piece-brown: #5d4037;
+    --accent: #e2e8f0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+#app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    border-bottom: 1px solid var(--accent);
+    background: #ffffff;
+}
+
+#app-header h1 {
+    font-size: 1.25rem;
+    letter-spacing: 2px;
+    font-weight: 800;
+}
+
+#status-bar {
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pulse {
+    width: 8px;
+    height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+#app-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 30px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    flex-grow: 1;
+}
+
+#board-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.player-tag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 520px;
+    padding: 10px 5px;
+    font-weight: 600;
+}
+
+.clock {
+    font-variant-numeric: tabular-nums;
+    background: #ffffff;
+    padding: 4px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--accent);
+    font-size: 1.1rem;
+}
+
+#chess-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: 100%;
+    max-width: 520px;
+    aspect-ratio: 1 / 1;
+    border: 4px solid var(--text-color);
+    border-radius: 4px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+.square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+.white-square { background-color: var(--board-white); }
+.blue-square { background-color: var(--board-blue); }
+
+.square.selected {
+    background-color: rgba(234, 179, 8, 0.6) !important;
+}
+
+/* Updated Piece Style for SVGs */
+.chess-piece-img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+    z-index: 10;
+}
+
+#video-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+}
+
+/* Updated for 16:9 Aspect Ratio */
+.video-box {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-label {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 4px;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+    #app-layout {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        gap: 15px;
+    }
+
+    #video-section {
+        display: contents; 
+    }
+
+    /* Video scaling handles aspect-ratio natively */
+    #opponent-video-container { order: 1; max-width: 100%; height: auto; }
+    #board-section { order: 2; width: 100%; }
+    #player-video-container { order: 3; max-width: 100%; height: auto; }
+    
+    .square { font-size: 2.2rem; }
+}
