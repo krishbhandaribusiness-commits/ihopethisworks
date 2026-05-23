@@ -82,7 +82,22 @@ socket.on('clock_update', (clocks) => {
     document.getElementById('player-clock').innerText = formatTime(clocks[myColor]);
     const oppColor = myColor === 'white' ? 'black' : 'white';
     document.getElementById('opponent-clock').innerText = formatTime(clocks[oppColor]);
+    updateActiveClock();
 });
+
+function updateActiveClock() {
+    if (!myColor) return;
+    const playerClock = document.getElementById('player-clock');
+    const opponentClock = document.getElementById('opponent-clock');
+    const turn = chess.turn() === 'w' ? 'white' : 'black';
+    if (turn === myColor) {
+        playerClock.classList.add('clock--active');
+        opponentClock.classList.remove('clock--active');
+    } else {
+        opponentClock.classList.add('clock--active');
+        playerClock.classList.remove('clock--active');
+    }
+}
 
 socket.on('game_over_announced', (reason) => {
     alert(`Game Over: ${reason}`);
@@ -135,6 +150,7 @@ function renderBoard() {
             boardElement.appendChild(squareDiv);
         }
     }
+    updateActiveClock();
 }
 
 function handleSquareClick(square) {

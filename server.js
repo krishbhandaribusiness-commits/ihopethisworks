@@ -31,7 +31,7 @@ io.on('connection', (socket) => {
         games[roomId] = {
             white: opponent.id,
             black: socket.id,
-            clocks: { white: 300, black: 300 },
+            clocks: { white: 180, black: 180 },
             turn: 'white',
             timerInterval: null
         };
@@ -39,7 +39,7 @@ io.on('connection', (socket) => {
         opponent.emit('match_found', { roomId, color: 'white', opponentId: socket.id });
         socket.emit('match_found', { roomId, color: 'black', opponentId: opponent.id });
 
-        startRoomClock(roomId);
+        // Clocks don't start ticking until White's first move is made.
     }
 
     socket.on('signal', (data) => {
@@ -54,8 +54,22 @@ io.on('connection', (socket) => {
         const game = games[roomId];
         if (!game || game[game.turn] !== socket.id) return;
 
+        // 3+2: the player who just completed a move gets +2 seconds.
+        // `data.nextTurn` is whose turn it is NOW, so the mover is the opposite color.
+        const moverColor = game.turn; // still the mover's color before we flip it
+        game.clocks[moverColor] += 2;
+
         game.turn = data.nextTurn;
-        
+
+        // Kick off the room clock on the very first move (White's opener).
+        if (!game.timerInterval) {
+            startRoomClock(roomId);
+        }
+
+        // Broadcast the updated clocks immediately so the increment shows up
+        // without waiting for the next 1s tick.
+        io.to(roomId).emit('clock_update', game.clocks);
+
         socket.to(roomId).emit('move_received', move);
     });
 
