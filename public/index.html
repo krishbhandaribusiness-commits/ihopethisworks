@@ -48,6 +48,30 @@
 
             <div class="board-frame">
                 <div id="chess-board"></div>
+
+                <!-- Draw offer / draw declined toast, overlaid at the top of the board -->
+                <div id="draw-toast" class="draw-toast" aria-live="polite" hidden>
+                    <span id="draw-toast-text"></span>
+                    <div id="draw-toast-actions" class="draw-toast__actions">
+                        <button type="button" id="draw-accept-btn" class="draw-toast__btn draw-toast__btn--accept">Accept</button>
+                        <button type="button" id="draw-decline-btn" class="draw-toast__btn">Decline</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resign / Draw controls, hidden until a match is found -->
+            <div id="game-controls" hidden>
+                <button type="button" id="resign-btn" class="game-ctrl">
+                    <svg class="game-ctrl__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+                        <line x1="4" y1="22" x2="4" y2="15"/>
+                    </svg>
+                    <span class="game-ctrl__label">Resign</span>
+                </button>
+                <button type="button" id="draw-btn" class="game-ctrl">
+                    <span class="game-ctrl__icon game-ctrl__icon--text" aria-hidden="true">½</span>
+                    <span class="game-ctrl__label">Offer Draw</span>
+                </button>
             </div>
 
             <div id="player-info" class="player-tag player-tag--player">
@@ -68,13 +92,66 @@
                 <div class="video-label">Opponent</div>
                 <div class="video-corner"></div>
             </div>
+
+            <!-- Move notation panel -->
+            <div id="move-list" class="move-list">
+                <div class="move-list__header">
+                    <span class="move-list__title">Notation</span>
+                    <span class="move-list__hint">3+2 · bullet</span>
+                </div>
+                <div id="move-list-body" class="move-list__body">
+                    <div class="move-list__placeholder">Waiting for first move…</div>
+                </div>
+            </div>
+
             <div id="player-video-container" class="video-box">
                 <video id="local-video" autoplay muted playsinline></video>
                 <div class="video-label">You</div>
                 <div class="video-corner"></div>
+
+                <!-- Camera / mic toggles overlaid at the bottom-center -->
+                <div id="media-controls" class="media-controls">
+                    <button type="button" id="cam-btn" class="media-btn" disabled aria-label="Toggle camera">
+                        <svg class="media-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                            <circle cx="12" cy="13" r="4"/>
+                        </svg>
+                    </button>
+                    <button type="button" id="mic-btn" class="media-btn" disabled aria-label="Toggle microphone">
+                        <svg class="media-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="9" y="2" width="6" height="12" rx="3"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </section>
     </main>
+
+    <!-- End-of-game modal -->
+    <div id="game-over-modal" class="modal" hidden>
+        <div class="modal__backdrop"></div>
+        <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
+            <div class="modal__crest" aria-hidden="true">
+                <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="18" height="18" rx="3" fill="#F5EDE0"/>
+                    <rect x="20" y="2" width="18" height="18" rx="3" fill="#5B8DEF"/>
+                    <rect x="2" y="20" width="18" height="18" rx="3" fill="#5B8DEF"/>
+                    <rect x="20" y="20" width="18" height="18" rx="3" fill="#F5EDE0"/>
+                    <circle cx="20" cy="20" r="6" fill="#FF6B5B"/>
+                </svg>
+            </div>
+            <div class="modal__eyebrow">Game Over</div>
+            <h2 id="game-over-title" class="modal__title">—</h2>
+            <div class="modal__actions">
+                <button type="button" id="rematch-btn" class="btn btn--primary">Rematch</button>
+                <button type="button" id="analyze-btn" class="btn btn--ghost">Analyze on Lichess</button>
+                <button type="button" id="new-opp-btn" class="btn btn--ghost">New Opponent</button>
+            </div>
+        </div>
+    </div>
 
     <script src="app.js"></script>
 </body>

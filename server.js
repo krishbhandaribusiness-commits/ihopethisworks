@@ -33,7 +33,8 @@ io.on('connection', (socket) => {
             black: socket.id,
             clocks: { white: 180, black: 180 },
             turn: 'white',
-            timerInterval: null
+            timerInterval: null,
+            rematchRequests: { white: false, black: false }
         };
 
         opponent.emit('match_found', { roomId, color: 'white', opponentId: socket.id });
@@ -77,8 +78,46 @@ io.on('connection', (socket) => {
         const game = games[data.roomId];
         if (game && game.timerInterval) {
             clearInterval(game.timerInterval);
+            game.timerInterval = null;
         }
         io.to(data.roomId).emit('game_over_announced', data.reason);
+    });
+
+    // ---------- Rematch ----------
+    socket.on('rematch_request', (data) => {
+        const game = games[data.roomId];
+        if (!game) return;
+        const color = game.white === socket.id ? 'white' :
+                      game.black === socket.id ? 'black' : null;
+        if (!color) return;
+
+        game.rematchRequests[color] = true;
+
+        if (game.rematchRequests.white && game.rematchRequests.black) {
+            // Both players agreed — reset game state.
+            if (game.timerInterval) {
+                clearInterval(game.timerInterval);
+                game.timerInterval = null;
+            }
+            game.clocks = { white: 180, black: 180 };
+            game.turn = 'white';
+            game.rematchRequests = { white: false, black: false };
+
+            io.to(data.roomId).emit('rematch_start');
+            io.to(data.roomId).emit('clock_update', game.clocks);
+        } else {
+            // Notify opponent that one side wants a rematch.
+            socket.to(data.roomId).emit('rematch_requested_by_opponent');
+        }
+    });
+
+    // ---------- Draw offers ----------
+    socket.on('draw_offer', (data) => {
+        socket.to(data.roomId).emit('draw_offered');
+    });
+
+    socket.on('draw_declined', (data) => {
+        socket.to(data.roomId).emit('draw_declined');
     });
 
     socket.on('disconnect', () => {
@@ -108,6 +147,7 @@ function startRoomClock(roomId) {
             io.to(roomId).emit('clock_update', game.clocks);
         } else {
             clearInterval(game.timerInterval);
+            game.timerInterval = null;
             io.to(roomId).emit('game_over_announced', `${game.turn === 'white' ? 'Black' : 'White'} wins on time!`);
         }
     }, 1000);
