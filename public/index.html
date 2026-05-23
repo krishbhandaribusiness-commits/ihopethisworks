@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChessConnect</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+    <header id="app-header">
+        <h1>CHESSCONNECT</h1>
+        <div id="status-bar"><span class="pulse" style="background:#ef4444"></span> Waiting for camera access...</div>
+    </header>
+
+    <main id="app-layout">
+        <section id="board-section">
+            <div id="opponent-info" class="player-tag">
+                <span>Opponent</span>
+                <span id="opponent-clock" class="clock">5:00</span>
+            </div>
+
+            <div id="chess-board"></div>
+
+            <div id="player-info" class="player-tag">
+                <span>You</span>
+                <span id="player-clock" class="clock">5:00</span>
+            </div>
+        </section>
+
+        <section id="video-section">
+            <div id="opponent-video-container" class="video-box">
+                <video id="remote-video" autoplay playsinline></video>
+                <div class="video-label">OPPONENT</div>
+            </div>
+            <div id="player-video-container" class="video-box">
+                <video id="local-video" autoplay muted playsinline></video>
+                <div class="video-label">YOU</div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
